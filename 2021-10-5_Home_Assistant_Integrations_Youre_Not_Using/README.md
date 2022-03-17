@@ -11,12 +11,15 @@
 Files You Need:
 
 **configuration.yaml** 
+
 Contains links to binary sensors, sensors, and has the utility meter configuration
 
 **binary_sensors.yaml** 
+
 Contains Workday and Times of Day (tod) sensors
 
 **automations.yaml**
+
 Contains example Automations for setting an input_datetime automagically, and an automation using that input_datetime as a trigger
 
 
