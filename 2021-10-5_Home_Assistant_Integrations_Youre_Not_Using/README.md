@@ -3,6 +3,10 @@
 <h1>Home Assistant Integrations You're Not Using</h1>
 <br>
 
+[![Watch the video](../images/videos/tn-5integrations.png)](https://youtu.be/QZB_o62AuV0)
+
+</div>
+
 
 Files You Need:
 

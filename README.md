@@ -2,6 +2,7 @@
 <img src="images/slacker_labs.png">
 <h1>Slacker Labs Video Configuration Examples</h1>
 <br>
+</div>
 
 
 The repository includes:
