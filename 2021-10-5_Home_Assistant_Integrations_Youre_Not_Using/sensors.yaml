@@ -1,0 +1,27 @@
+# Copy the config below and put it in your sensors.yaml. 
+# If you dont have one create one, or just download this one. 
+# But be sure to update your configuration.yaml file with location of this file
+#
+# Track your Washer Status. This requires that you have a sensor
+# that can tell you when the washer is running, 
+- platform: history_stats
+  name: Washer Time
+  entity_id: sensor.washer_status # Sensor you want to track
+  state: 'running' # state you are wanting to track
+  type: time #time becasue we want to track time
+  end: '{{ now() }}' #track time from when it started running until now.  
+  duration:
+    days: 7 # Keep 7 days of historuy so we can see the total for the week. 
+
+
+# For tracking number of times motion is detected 
+# at front door in last 7 days       
+- platform: history_stats
+  name: Front Door Motion
+  entity_id: binary_sensor.aarlo_motion_front_door
+  state: 'on'
+  type: count 
+  end: '{{ now() }}'
+  duration:
+    days: 7
+          

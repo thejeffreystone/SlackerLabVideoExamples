@@ -1,0 +1,56 @@
+#
+#
+#
+# Use this automation to change an input datetime based on certain conditions.
+# For example, in this case we use a google calendar event to tell us if its
+# a school day. And if it is then we set good morning time to 6:45. 
+# If its not but it a workday, then set it to 7:30. 
+# And if none of those then 7:30. 
+- id: bd8e4e20-f138-49ec-a9f6-d23ab1450b98
+  alias: set good morning time
+  trigger:
+    - platform: time
+      at: '05:55:00' # this runs every day at 5:55 am
+  action:
+    - service: input_datetime.set_datetime
+      entity_id: input_datetime.good_morning
+      data_template:
+        time: > 
+          {% if is_state_attr('calendar.skylar_school', 'offset_reached',True) %}
+            06:45
+          {% elif is_state('binary_sensor.workday_sensor.state','on') %}
+            07:00
+          {% else %}
+            07:30
+          {% endif %}
+
+#
+# Then we can use that input datetime to trigger our automation:
+- id: ce3d7e63-3eaa-4cc5-959b-1334e6c5c4e6
+  alias: Good Morning
+  initial_state: true
+  trigger:
+      platform: time
+      at: input_datetime.good_morning # Our input date time as a trigger
+  action:
+  - service: scene.turn_on
+    entity_id: scene.normal_livingroom_lighting # activate living room lights. 
+  - service: scene.turn_on
+    entity_id: scene.normal_kitchen_lighting # turn on kitchen lighting.
+  - service: scene.turn_on
+    entity_id: scene.jeff_light_on
+  - service: script.twitter_notify_image # and tweet about our day
+    data_template:
+      tweet: >-
+        {{ [ 
+          "Good Morning! Time to rise and shine at Anchorage House. ",
+          "Good Morning from Anchorage House. Glad to see everyone made it. ", 
+          "Birds are awake, and so is Anchorage House. Good morning everyone!",
+          "Good morning. Anchorage House is up and online." 
+          ] | random }}
+        {% if is_state('calendar.holidays_in_united_states', 'on') %}
+          Today is {{state_attr('calendar.holidays_in_united_states','message') }}.
+        {% endif %}
+      image: >-
+        {{ [ "/config/www/tweet_images/coffee.jpg",
+              "/config/www/tweet_images/coffee2.jpg"] | random }}

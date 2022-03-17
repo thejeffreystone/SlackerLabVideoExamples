@@ -1,0 +1,31 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+# You need the following line if you use the binary_sensor.yaml file. 
+# Just add it to your configuration.yaml 
+binary_sensor: !include binary_sensors.yaml
+
+# You need the following line if you add the sensors.yaml to your
+# HA Setup
+sensor: !include sensors.yaml
+
+
+# Used to track rate of change, or differences between points in time. 
+utility_meter:
+  # Use the 7 day history of motion at front door
+  # to get daily motion.
+  hourly_frontdoor_motion:
+    source: sensor.front_door_motion # entity to track
+    cycle: hourly # events that happened this hour  
+  daily_frontdoor_motion:
+    source: sensor.front_door_motion
+    cycle: daily # events today  
