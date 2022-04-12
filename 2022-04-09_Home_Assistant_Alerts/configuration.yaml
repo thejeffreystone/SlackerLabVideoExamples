@@ -1,0 +1,54 @@
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Text to speech
+tts:
+  # This is the default TTS integration that comes with
+  # new installs. It leverages Google's Cloud
+  - platform: google_translate
+
+  # This is Amazon Polly. Until revently this is the one I used.
+  # Uncomment this and update the secrets.yaml with your AWS keys.
+  # For more on Amazon Polly: https://youtu.be/Ys9xP6XP800
+
+  # - platform: amazon_polly
+  #   aws_access_key_id: !secret aws_key
+  #   aws_secret_access_key: !secret aws_secret
+  #   region_name: 'us-east-1'
+  #   text_type: ssml
+  #   voice: Brian
+  #   cache: True
+  #   engine: neural
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+# To use the alerts.yaml you need to add the line below to
+# your configuration.yaml
+alert: !include alerts.yaml
+
+#But if you dont want to do that you could just put them right in this file
+# alert:
+#   garage_open:
+#     name: Garage Open 
+#     message: Someone left the garage open. You Should Close it.
+#     done_message: Garage is closed
+#     entity_id: binary_sensor.garage_door
+#     state: "on"
+#     repeat: 5 # This will repeat every 5 minutes
+#     can_acknowledge: false
+#     skip_first: False
+#     notifiers:
+#       - mobile_app_jeffreys_iphone_8
+#   another_alert
+#     name: ...
+
+# Build your own notification service for any TTS service.
+notify:
+  - name: living_room # The name
+    platform: tts
+    tts_service: tts.google_translate_say # The TTS service
+    # tts_service: tts.cloud_say # Nabu Casa TTS
+    # tts_service: tts.amazon_polly_say #for those rocking the Amazon Polly
+    media_player: media_player.ha_blue #media player

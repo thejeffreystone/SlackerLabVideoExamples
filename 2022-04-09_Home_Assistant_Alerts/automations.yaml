@@ -1,0 +1,67 @@
+# Security Issues
+# If doors are opened and sentry mode is on turn on security issue.
+#
+- id: security_breach
+  alias: Security Breach
+  trigger:
+    - platform: state
+      entity_id:
+        - binary_sensor.front_door
+        - binary_sensor.back_door
+        - binary_sensor.side_door
+        - binary_sensor.garage_door
+      to: "on"
+  condition:
+    - condition: state
+      entity_id: input_boolean.sentry_mode
+      state: "on"
+  action:
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.security_issue
+  initial_state: true
+
+# If garage is still open at 10:30pm turn on alart to make sure it get closed
+# by flipping on that garage after dark helper.
+- id: close_garage_lights_out
+  alias: Close Garage at lights out
+  initial_state: true
+  trigger:
+    - platform: time
+      at: "22:30:00"
+  condition:
+    - condition: state
+      entity_id: binary_sensor.garage_door
+      state: "on"
+  action:
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.garage_after_dark
+
+# When Kat leaves work, turn on her travel monitor which kicks of an alert
+- id: kat_leaves_zoo
+  alias: Kat Leaves Zoo Notification
+  initial_state: true
+  trigger:
+    - platform: zone
+      event: leave
+      zone: zone.zoo
+      entity_id: person.katherine
+  condition:
+    condition: time
+    after: "16:00:00"
+    before: "18:00:00"
+  action:
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.kat_travel_monitor
+
+# Turn on Washer Notification
+- id: washer_notification
+  initial_state: true
+  alias: Washer Notification
+  trigger:
+  - platform: state
+    entity_id: sensor.washer_status # Status Sensor I built, but could be anything
+    from: running
+    to: complete
+  action:
+  - service: input_boolean.turn_on
+    entity_id: input_boolean.washer_finished

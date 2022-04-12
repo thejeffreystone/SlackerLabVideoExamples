@@ -1,0 +1,95 @@
+#
+# Basic alert
+simple_garage_after_dark:
+  name: Garage Open After Dark
+  message: Someone left the garage open. You Should Close it.
+  done_message: Garage is closed
+  entity_id: binary_sensor.garage_door
+  state: "on"
+  repeat: 5 # This will repeat every 5 minutes
+  can_acknowledge: false
+  skip_first: False
+  notifiers:
+    - mobile_app_jeffreys_iphone_8
+
+##########################################################
+# Alert using a Helper
+unauthorized_access:
+  name: Potential Unauthorized Access Detected
+  done_message: Security Issue Cleared
+  entity_id: input_boolean.security_issue
+  state: "on"
+  repeat: 2
+  can_acknowledge: false
+  skip_first: False
+  notifiers:
+    - mobile_app_jeffreys_iphone_8
+
+##########################################################
+
+# Slacker Labs Alert - Randomized For Our Pleasure
+slackerlabs_garage_after_dark:
+  name: Garage Open After Dark
+  message: >
+    {{ [
+        'I have noticed the garage is still open.', 
+        'Why is the garage still open?',
+        'Someone forgot to close the garage.'
+        ] | random }}
+    {{ [
+        'The night is dark and full of terrors, so closing it seems like a good option.', 
+        'Were you waiting for me to close it?',
+        'I am not sure we can fit anymore moths in there.',
+        'Stop what you are doing and close it., Please.'
+        ] | random }}
+
+  done_message: Garage is closed
+  entity_id: input_boolean.garage_after_dark
+  state: "on"
+  repeat: 5
+  can_acknowledge: false
+  skip_first: False
+  notifiers:
+    - mobile_app_jeffreys_iphone_8
+
+##########################################################
+# We can also leverage the state of a sensor in our message.
+kat_heading_home:
+  name: Kat is headed home
+  message: "Kat will be home in {{state_attr('sensor.kat_ett_home','duration') | round}} minutes."
+  entity_id: input_boolean.kat_travel_monitor
+  state: "on"
+  repeat: 20
+  can_acknowledge: True
+  skip_first: False
+  notifiers:
+    - jeff_ios
+    - kitchen
+
+##########################################################
+# But what about washing machine notifications?
+# With Text to speech...
+washing_machine_finished:
+  name: Washing Machine Finished
+  message: >
+    The washing machine completed its cycle 
+      {% set seconds = now().timestamp() - as_timestamp(states.sensor.washer_status.last_changed) %}
+      {% set hours = seconds / 60 %}
+      {% if hours | int == 1 %}
+        over an hour ago.
+      {% elif hours | int > 1 %}
+        over {{ hours | int }} hours ago.
+      {% else %}
+        {{ (seconds // 60) | int }} minutes ago.
+      {% endif %}
+  entity_id: input_boolean.washer_finished
+  state: "on"
+  repeat:
+    - 15
+    - 30
+    - 45
+  can_acknowledge: false
+  skip_first: False
+  notifiers:
+    - mobile_app_jeffreys_iphone_8
+    - living_room # A TTS Service?
