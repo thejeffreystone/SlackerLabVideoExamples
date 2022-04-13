@@ -3,7 +3,7 @@
 <h1>Home Assistant Alerts</h1>
 <br>
 
-[![Watch the video](../images/videos/tn-5integrations.png)](https://youtu.be/QZB_o62AuV0)
+[![Watch the video](../images/videos/tn-Alerts.png)](https://youtu.be/gluji2_uYws)
 
 </div>
 
