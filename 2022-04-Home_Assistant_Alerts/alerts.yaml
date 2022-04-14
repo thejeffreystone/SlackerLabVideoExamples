@@ -73,8 +73,8 @@ washing_machine_finished:
   name: Washing Machine Finished
   message: >
     The washing machine completed its cycle 
-      {% set seconds = now().timestamp() - as_timestamp(states.sensor.washer_status.last_changed) %}
-      {% set hours = seconds / 60 %}
+      {% set seconds = (now() - states.sensor.washer_status.last_changed).seconds %}
+      {% set hours = seconds / 3600 %}
       {% if hours | int == 1 %}
         over an hour ago.
       {% elif hours | int > 1 %}
