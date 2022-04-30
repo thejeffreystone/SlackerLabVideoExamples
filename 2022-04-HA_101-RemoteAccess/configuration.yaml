@@ -1,0 +1,18 @@
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+http:
+  # Paths to your Cert Files
+  ssl_certificate: /ssl/fullchain.pem
+  ssl_key: /ssl/privkey.pem
+  # IP Ban
+  ip_ban_enabled: true
+  login_attempts_threshold: 5 # the number of failed logins before banning an ip address
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
