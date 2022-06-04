@@ -1,0 +1,55 @@
+
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Only uncomment this if you want to use the package directory. 
+# Otherwise copy the sensor section below and the scripts in tje sceript directory. 
+#http:
+  #packages: !include_dir_named packages # needed if you are going to use packages
+
+# Text to speech
+tts:
+  # This is the default TTS integration that comes with
+  # new installs. It leverages Google's Cloud
+  - platform: google_translate
+
+  # This is Amazon Polly. Until revently this is the one I used.
+  # Uncomment this and update the secrets.yaml with your AWS keys.
+  # For more on Amazon Polly: https://youtu.be/Ys9xP6XP800
+
+  # - platform: amazon_polly
+  #   aws_access_key_id: !secret aws_key
+  #   aws_secret_access_key: !secret aws_secret
+  #   region_name: 'us-east-1'
+  #   text_type: ssml
+  #   voice: Brian
+  #   cache: True
+  #   engine: neural
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+
+# Sensors to grab data from MQTT for use in scripts
+sensor:
+  - platform: mqtt
+    name: "Jarvis Last Msg"
+    state_topic: "house/polly/lastmsg"
+  - platform: mqtt
+    name: "Jarvis Last Location"
+    state_topic: "house/polly/lastloc"
+  - platform: mqtt
+    name: "Jarvis Last Msg Time"
+    state_topic: "house/polly/msgtime"
+
+# For those of you Wathcing this after the 2022.6 release use this:
+# mqtt:
+#   sensor:
+#   - name: "Jarvis Last Msg"
+#     state_topic: "house/polly/lastmsg"
+#   - name: "Jarvis Last Location"
+#     state_topic: "house/polly/lastloc"
+#   - name: "Jarvis Last Msg Time"
+#     state_topic: "house/polly/msgtime"  
