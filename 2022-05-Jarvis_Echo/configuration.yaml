@@ -1,0 +1,37 @@
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+http:
+  packages: !include_dir_named packages # needed if you are going to use packages
+
+# Text to speech
+tts:
+  # This is the default TTS integration that comes with
+  # new installs. It leverages Google's Cloud
+  - platform: google_translate
+
+  # This is Amazon Polly. Until revently this is the one I used.
+  # Uncomment this and update the secrets.yaml with your AWS keys.
+  # For more on Amazon Polly: https://youtu.be/Ys9xP6XP800
+
+  # - platform: amazon_polly
+  #   aws_access_key_id: !secret aws_key
+  #   aws_secret_access_key: !secret aws_secret
+  #   region_name: 'us-east-1'
+  #   text_type: ssml
+  #   voice: Brian
+  #   cache: True
+  #   engine: neural
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+# Uncomment the lines blow if you want to deinfe the input select here
+input_select:
+  jarvis_voice:
+    name: Jarvis voice
+    options:
+      - Brian
+      - Emma
+    initial: Brian

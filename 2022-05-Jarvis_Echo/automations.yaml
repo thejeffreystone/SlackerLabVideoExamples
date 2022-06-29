@@ -1,0 +1,36 @@
+
+# Example Automations
+
+- alias: Lightning Detected Announcement
+  trigger:
+    - platform: state
+      entity_id: sensor.lightning_warning
+      to: 'Unsafe'
+  action:
+    - service: notify.alexa_media
+      data: 
+        message: >
+          <voice name="{{ states('input_select.jarvis_voice') }}">
+          <amazon:auto-breaths>
+          <prosody rate="fast">
+          Pardon me, Lightning has been detected.
+          </prosody>
+          </amazon:auto-breaths>
+          </voice>
+        target: media_player.kitchen_echo
+        data:
+          type: tts
+
+
+- alias: Lightning Detected Alt
+  trigger:
+    - platform: state
+      entity_id: sensor.lightning_warning
+      to: 'Unsafe'
+  action:
+    - service: script.speech_engine_demo
+      data: 
+        message: 'Pardon me, Lightning has been detected.'
+        who: kitchen
+        voice: "{{ states('input_select.jarvis_voice') }}"
+        #voice: Brian

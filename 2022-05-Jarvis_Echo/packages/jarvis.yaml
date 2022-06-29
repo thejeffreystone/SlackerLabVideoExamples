@@ -1,0 +1,103 @@
+
+
+input_select:
+  jarvis_voice:
+    name: Jarvis voice
+    options:
+      - Brian
+      - Emma
+    initial: Brian
+
+
+
+
+
+
+automation:
+  - alias: Lightning Detected Announcement
+    trigger:
+      - platform: state
+        entity_id: sensor.lightning_warning
+        to: 'Unsafe'
+    action:
+      - service: notify.alexa_media
+        data: 
+          message: >
+            <voice name="{{ states('input_select.jarvis_voice') }}">
+            <amazon:auto-breaths>
+            <prosody rate="fast">
+            Pardon me, Lightning has been detected.
+            </prosody>
+            </amazon:auto-breaths>
+            </voice>
+          target: media_player.kitchen_echo
+          data:
+            type: tts
+  
+
+
+
+
+  
+  - alias: Lightning Detected Alt
+    trigger:
+      - platform: state
+        entity_id: sensor.lightning_warning
+        to: 'Unsafe'
+    action:
+      - service: script.speech_engine_demo
+        data: 
+          message: 'Pardon me, Lightning has been detected.'
+          who: kitchen
+          voice: "{{ states('input_select.jarvis_voice') }}"
+          #voice: Brian
+
+
+
+
+
+
+
+
+script:
+  speech_engine_demo:
+    sequence:
+      # - condition: state
+      #   entity_id: input_boolean.audible_notifications
+      #   state: 'on'
+      # - condition: state
+      #   entity_id: group.family
+      #   state: 'home'
+      # - condition: state
+      #   entity_id: input_boolean.vacation_mode
+      #   state: 'off'
+      - service: notify.alexa_media
+        data: 
+          message: >
+            <voice name="{{ voice }}">
+            <amazon:auto-breaths>
+            <prosody rate="fast">
+            {{ message }}
+            </prosody>
+            </amazon:auto-breaths>
+            </voice>
+          target: >
+            {% if who in ['kitchen_echo','media_player.kitchen_echo','kitchen'] %}
+              media_player.kitchen_echo
+            {% elif who in ['skylar_bedroom','media_player.skylars_echo','skylars_bedroom','skylars_echo'] %}
+              media_player.skylars_bedroom_echo
+            {% elif who in ['master_bedroom', 'media_player.dads_desk'] %}
+              media_player.dads_desk
+            {% elif who in ['livingroom_echo','media_player.living_room_echo','living_room', 'main'] %}
+              media_player.living_room_echo
+            {% elif who in ['all'] %}
+              group.all_echos
+            {% elif who in ['garage'] %}
+              media_player.garage_echo
+            {% else %}
+              media_player.living_room_echo
+            {% endif %}
+          data:
+            type: tts
+
+
