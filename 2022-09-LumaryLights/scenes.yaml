@@ -1,0 +1,200 @@
+- id: '1659356031043'
+  name: Kitchen Normal
+  entities:
+    light.kitchen_lights:
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - brightness
+      - color_temp
+      - hs
+      color_mode: color_temp
+      brightness: 255
+      color_temp: 153
+      hs_color:
+      - 54.768
+      - 1.6
+      rgb_color:
+      - 255
+      - 254
+      - 250
+      xy_color:
+      - 0.326
+      - 0.333
+      entity_id:
+      - light.lumary_smart_recessed_downlight_a2_3
+      - light.lumary_smart_recessed_downlight_a2_9
+      - light.lumary_smart_recessed_downlight_a2_8
+      - light.lumary_smart_recessed_downlight_a2_6
+      icon: mdi:lightbulb-group
+      friendly_name: Kitchen Lights
+      supported_features: 0
+      state: 'on'
+    light.lumary_smart_recessed_downlight_a2_7:
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - brightness
+      - color_temp
+      - hs
+      color_mode: color_temp
+      brightness: 255
+      color_temp: 153
+      hs_color:
+      - 54.768
+      - 1.6
+      rgb_color:
+      - 255
+      - 254
+      - 250
+      xy_color:
+      - 0.326
+      - 0.333
+      friendly_name: Fridge Light
+      supported_features: 0
+      state: 'on'
+  metadata:
+    light.kitchen_lights:
+      entity_only: true
+    light.lumary_smart_recessed_downlight_a2_7:
+      entity_only: true
+- id: '1659356107704'
+  name: Pantry Normal
+  entities:
+    light.pantry_lights:
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - brightness
+      - color_temp
+      - hs
+      color_mode: color_temp
+      brightness: 255
+      color_temp: 153
+      hs_color:
+      - 54.768
+      - 1.6
+      rgb_color:
+      - 255
+      - 254
+      - 250
+      xy_color:
+      - 0.326
+      - 0.333
+      entity_id:
+      - light.lumary_smart_recessed_downlight_a2_5
+      - light.lumary_smart_recessed_downlight_a2_4
+      icon: mdi:lightbulb-group
+      friendly_name: Pantry Lights
+      supported_features: 0
+      state: 'on'
+  metadata:
+    light.pantry_lights:
+      entity_only: true
+- id: '1659356121269'
+  name: Bar Normal
+  entities:
+    light.bar_lights:
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - brightness
+      - color_temp
+      - hs
+      color_mode: color_temp
+      brightness: 99
+      color_temp: 153
+      hs_color:
+      - 54.768
+      - 1.6
+      rgb_color:
+      - 255
+      - 254
+      - 250
+      xy_color:
+      - 0.326
+      - 0.333
+      entity_id:
+      - light.lumary_smart_rgb_tunable_white_recessed_light_a2
+      - light.lumary_smart_recessed_downlight_a2_2
+      icon: mdi:lightbulb-group
+      friendly_name: Bar Lights
+      supported_features: 0
+      state: 'on'
+  metadata:
+    light.bar_lights:
+      entity_only: true
+- id: '1659356333948'
+  name: Kitchen Dark
+  entities:
+    light.kitchen_lights:
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - brightness
+      - color_temp
+      - hs
+      entity_id:
+      - light.lumary_smart_recessed_downlight_a2_3
+      - light.lumary_smart_recessed_downlight_a2_9
+      - light.lumary_smart_recessed_downlight_a2_8
+      - light.lumary_smart_recessed_downlight_a2_6
+      icon: mdi:lightbulb-group
+      friendly_name: Kitchen Lights
+      supported_features: 0
+      state: 'off'
+    light.lumary_smart_recessed_downlight_a2_7:
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - brightness
+      - color_temp
+      - hs
+      friendly_name: Fridge Light
+      supported_features: 0
+      state: 'off'
+  metadata:
+    light.kitchen_lights:
+      entity_only: true
+    light.lumary_smart_recessed_downlight_a2_7:
+      entity_only: true
+- id: '1659356371875'
+  name: Bar Dark
+  entities:
+    light.bar_lights:
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - brightness
+      - color_temp
+      - hs
+      entity_id:
+      - light.lumary_smart_rgb_tunable_white_recessed_light_a2
+      - light.lumary_smart_recessed_downlight_a2_2
+      icon: mdi:lightbulb-group
+      friendly_name: Bar Lights
+      supported_features: 0
+      state: 'off'
+  metadata:
+    light.bar_lights:
+      entity_only: true
+- id: '1659356387035'
+  name: Pantry Dark
+  entities:
+    light.pantry_lights:
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - brightness
+      - color_temp
+      - hs
+      entity_id:
+      - light.lumary_smart_recessed_downlight_a2_5
+      - light.lumary_smart_recessed_downlight_a2_4
+      icon: mdi:lightbulb-group
+      friendly_name: Pantry Lights
+      supported_features: 0
+      state: 'off'
+  metadata:
+    light.pantry_lights:
+      entity_only: true

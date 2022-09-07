@@ -1,0 +1,133 @@
+- id: '1659356428735'
+  alias: Kitchen Lighting
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_motion
+    from: 'off'
+    to: 'on'
+    id: Light_Needed
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_motion
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+    id: light_not_needed
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: light.kitchen_lights
+        state: 'off'
+      - condition: trigger
+        id: Light_Needed
+      sequence:
+      - service: scene.turn_on
+        data: {}
+        target:
+          entity_id: scene.kitchen_normal
+    - conditions:
+      - condition: trigger
+        id: light_not_needed
+      sequence:
+      - service: scene.turn_on
+        data: {}
+        target:
+          entity_id: scene.kitchen_dark
+    default: []
+  mode: restart
+- id: '1659356561696'
+  alias: Bar Lighting
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.bar_motion
+    from: 'off'
+    to: 'on'
+    id: light_needed
+  - platform: state
+    entity_id:
+    - binary_sensor.bar_motion
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+    id: light_not_needed
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: light.bar_lights
+        state: 'off'
+      - condition: trigger
+        id: light_needed
+      sequence:
+      - service: scene.turn_on
+        data: {}
+        target:
+          entity_id: scene.bar_normal
+    - conditions:
+      - condition: trigger
+        id: light_not_needed
+      sequence:
+      - service: scene.turn_on
+        data: {}
+        target:
+          entity_id: scene.bar_dark
+    default: []
+  mode: restart
+- id: '1659356679430'
+  alias: Pantry Lighting
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.pantry_motion
+    from: 'off'
+    to: 'on'
+    id: light_needed
+  - platform: state
+    entity_id:
+    - binary_sensor.pantry_motion
+    from: 'on'
+    to: 'off'
+    id: light_not_needed
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: light.pantry_lights
+        state: 'off'
+      - condition: trigger
+        id: light_needed
+      sequence:
+      - service: scene.turn_on
+        data: {}
+        target:
+          entity_id: scene.pantry_normal
+    - conditions:
+      - condition: trigger
+        id: light_not_needed
+      sequence:
+      - service: scene.turn_on
+        data: {}
+        target:
+          entity_id: scene.pantry_dark
+    default: []
+  mode: restart
+

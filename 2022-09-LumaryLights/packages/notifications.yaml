@@ -1,0 +1,121 @@
+
+
+# Sensors to grab data from MQTT for use in scripts
+sensor:
+  - platform: mqtt
+    name: "Jarvis Last Msg"
+    state_topic: "house/polly/lastmsg"
+  - platform: mqtt
+    name: "Jarvis Last Location"
+    state_topic: "house/polly/lastloc"
+  - platform: mqtt
+    name: "Jarvis Last Msg Time"
+    state_topic: "house/polly/msgtime"
+
+# For those of you Wathcing this after the 2022.6 release use this:
+# mqtt:
+#   sensor:
+#   - name: "Jarvis Last Msg"
+#     state_topic: "house/polly/lastmsg"
+#   - name: "Jarvis Last Location"
+#     state_topic: "house/polly/lastloc"
+#   - name: "Jarvis Last Msg Time"
+#     state_topic: "house/polly/msgtime"  
+
+
+
+
+
+# # To call the speech engine script below use the following as a guide:
+
+# - service: script.speech_engine_simplified
+#   data: 
+#     who: '{{ states(''sensor.room_audio'') }}'
+#     message: >
+#       At {{ states('sensor.jarvis_last_msg_time') }} in the {{ states('sensor.jarvis_last_location') }} I said. {{ states('sensor.jarvis_last_msg') }}
+#     msg_summary: "recall"
+
+script:
+  # A simplified Speech Engine that for your text to speech notifications.
+  speech_engine_simplified:
+    sequence:
+      # Any conditions you want to include.
+
+      # - condition: state
+      #   entity_id: input_boolean.audible_notifications
+      #   state: 'on'
+
+      # Call your TTS Service
+      - service: tts.amazon_polly_say
+        data_template:
+          entity_id: >-
+            {{ who }}
+          message: >-
+            <speak>
+            <break time="1s"/>
+            {{ message }}
+            </speak>
+          cache: true
+
+      # Save your message for recall
+      - service: mqtt.publish
+        data_template:
+          topic: 'house/polly/lastmsg'
+          payload: >
+            {% if msg_summary == 'recall' %}
+              {% set msg_summary = '{{states(''sensor.jarvis_last_msg'')}}' %}
+            {% else %}
+              {% if msg_summary %}
+                {% set message = msg_summary %}
+              {% endif %}
+              {%- macro cleanup(data) -%}
+                {%- for item in data.split("\n")  if item | trim != "" -%}
+                  {{ item | trim }} {% endfor -%}
+              {%- endmacro -%}
+              {{- cleanup( message | striptags | truncate(220) ) -}}
+            {% endif %}
+
+      # Save time of last message
+      - service: mqtt.publish
+        data_template:
+          topic: 'house/polly/msgtime'
+          payload: >
+            {{ now().strftime("%-I") }}:{{ now().strftime("%M") }} {{ now().strftime("%p") }}
+          retain: true
+
+      # Save location
+      - service: mqtt.publish
+        data_template:
+          topic: 'house/polly/lastloc'
+          payload: '{{ who }}'
+          retain: true
+
+  # Script for playing the last message.
+  # You can call this from a routing on the Google Home or Amazon Echo
+  # Or from an automation tiggered by a button.
+  play_last_message:
+    sequence:
+      - service: script.speech_engine_simplified
+        data: 
+            who: '{{ states(''sensor.room_audio'') }}'
+            message: >
+              At {{ states('sensor.jarvis_last_msg_time') }} 
+              in the {{ states('sensor.jarvis_last_location') }} 
+              I said. {{ states('sensor.jarvis_last_msg') }}
+            msg_summary: "recall"
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+

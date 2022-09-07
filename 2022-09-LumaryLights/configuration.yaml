@@ -1,0 +1,13 @@
+
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Only uncomment this if you want to use the package directory. 
+# Otherwise copy the sensor section below and the scripts in tje sceript directory. 
+#http:
+  #packages: !include_dir_named packages # needed if you are going to use packages
+
+automation: !include automations.yaml
+scene: !include scenes.yaml
+ 
