@@ -1,0 +1,33 @@
+
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Only uncomment this if you want to use the package directory. 
+# Otherwise copy the sensor section below and the scripts in tje sceript directory. 
+#http:
+  #packages: !include_dir_named packages # needed if you are going to use packages
+
+mqtt: !include mqtt.yaml
+
+# Or just define them in this file like:
+
+# mqtt:
+#   sensor:
+#   - name: "Family Status"
+#     state_topic: "house/family/status"
+#     payload_available: "online"
+#     payload_not_available: "offline"
+#   - name: "Family Arrived"
+#     state_topic: "house/family/arrived"
+#     payload_available: "online"
+#     payload_not_available: "offline"
+#   - name: "Jeff Last Known Location"
+#     state_topic: "house/jeff/last_known_location"
+#     payload_available: "online"
+#     payload_not_available: "offline"
+#   - name: "Kat Last Known Location"
+#     state_topic: "house/kat/last_known_location"
+#     payload_available: "online"
+#     payload_not_available: "offline"
+ 
