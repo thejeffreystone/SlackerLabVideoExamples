@@ -3,7 +3,7 @@
 <h1>Lumary LED Recessed Lighting Automations</h1>
 <br>
 
-[![Watch the video](../images/videos/tn-LumaryReview.jpg)](https://youtube.com/c/SlackerLabs)
+[![Watch the video](../images/videos/tn-LumaryReview.png)](https://youtu.be/9kVT3dX4MvI)
 
 </div>
 
