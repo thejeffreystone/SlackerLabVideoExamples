@@ -1,0 +1,45 @@
+# This Automation simply handles turning off a deivce that has been turned on 
+# by a different method. But you could include a trigger for turning on the device
+- id: '1663251471668'
+  alias: Studio Wax Warmer
+  description: 'This automation handles the Wax Warmer in the Studio'
+  trigger:
+  # Trigger this automation when it the device turns on.
+  - platform: state
+    entity_id:
+    - switch.studio_airfreshener
+    from: 'off'
+    to: 'on'
+    id: wax_on # this is needed for the choose action. 
+  # Trigger when timer finishes. Need to watch for an event. 
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.studio_wax_warmer
+    id: wax_off # this is needed for the choose action. 
+  condition: []
+  action:
+  # the choose action allows us to handle our truggers differently. 
+  - choose:
+    # First, when the device turns on we need to start our timer.
+    # This timer will run until stopped, so if you have conditions that
+    # should stop this timer you will need to make sure that are also in the trigger. 
+    # Then just add another condition in this choose action to handle stopping the timer.
+    - conditions:
+      - condition: trigger
+        id: wax_on
+      sequence:
+      - service: timer.start
+        data: {}
+        target:
+          entity_id: timer.studio_wax_warmer
+    # Now we need to handle when the timer has finished. And we just turn off our device. 
+    - conditions:
+      - condition: trigger
+        id: wax_off
+      sequence:
+      - service: switch.turn_off
+        data: {}
+        target:
+          entity_id: switch.studio_airfreshener
+  mode: single
