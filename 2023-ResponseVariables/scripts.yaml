@@ -1,0 +1,36 @@
+get_taglines:
+  sequence:
+  - variables:
+      slackerlabs: "Automate the Boring Stuff!"
+      paulhibbert: "ooooh the Zigbee."
+      everythingsmarthome: "nice"
+      taglines: >
+        {"slackerlabs": "{{slackerlabs}}",
+        "paulhibbert":"{{paulhibbert}}",
+        "everythingsmarthome":"{{everythingsmarthome}}"}
+  - stop: "Alight. Im done."
+    response_variable: "taglines"
+    
+  # jarvis_speaker only gets Echos by limiting to media players with the last_called attribute
+  # audio speaker gets any device with the class speaker
+get_room_services:
+  sequence:
+  - variables:
+      room_services: >-
+        {% set jarvis_speaker = states.media_player | 
+            selectattr('entity_id', 'in', area_entities(room)) |
+            rejectattr('attributes.last_called', 'undefined') |
+            map(attribute='entity_id') |
+          list | first %}
+
+        {% set audio_speaker = states.media_player | 
+            selectattr('entity_id', 'in', area_entities(room)) |
+            rejectattr('attributes.device_class', 'undefined') |
+            selectattr('attributes.device_class', 'search', '(speaker)') | 
+            map(attribute='entity_id') |
+          list | first %}
+
+        {% set tts = 'amp' %}
+        {"area":"{{room}}","jarvis_speaker":"{{jarvis_speaker}}","jarvis_tts":"{{tts}}","audio_speaker":"{{audio_speaker}}"}
+  - stop: "ok, Im done."
+    response_variable: "room_services"

@@ -1,0 +1,166 @@
+  - id: 8a08e182-8b64-43e0-8835-42a46acf228b
+    alias: really_cool_automation
+    trigger:
+    - platform: state
+      entity_id: button.get_tagline
+      id: easy_button
+    - platform: state
+      entity_id: binary_sensor.aqara_vibrator
+      to: 'on'
+      id: baited_by_the_master
+    - platform: state
+      entity_id: sensor.3d_printer_state
+      to: 'finished'
+      id: nice
+    action:
+    - variables:
+        slackerlabs: "Automate the Boring Stuff!"
+        paulhibbert: "ooooh the Zigbee."
+        everythingsmarthome: "nice"
+    - choose:
+      - conditions:
+        - condition: trigger
+          id: easy_button
+        sequence:
+        - service: notify.jeff_ios
+          data:
+            message: '{{ slackerlabs }}'
+      - conditions:
+        - condition: trigger
+          id: baited_by_the_master
+        sequence:
+        - service: script.ohyeah
+      - conditions:
+        - condition: trigger
+          id: nice
+        sequence:
+        - service: notify.jeff_ios
+          data:
+            message: '{{ everythingsmarthome }}'
+      default: []
+
+  - id: dff6ec8c-afbe-40ab-9d9d-bda94539e9a0
+    alias: really_really_cool_automation
+    trigger:
+    - platform: state
+      entity_id: button.get_tagline
+      id: easy_button
+    - platform: state
+      entity_id: binary_sensor.aqara_vibrator
+      to: 'on'
+      id: baited_by_the_master
+    - platform: state
+      entity_id: sensor.3d_printer_state
+      to: 'finished'
+      id: nice
+    action:
+    - service: script.get_taglines
+      response_variable: "taglines"
+    - choose:
+      - conditions:
+        - condition: trigger
+          id: easy_button
+        sequence:
+        - service: notify.jeff_ios
+          data:
+            message: '{{ taglines.slackerlabs }}'
+      - conditions:
+        - condition: trigger
+          id: baited_by_the_master
+        sequence:
+        - service: script.ohyeah
+      - conditions:
+        - condition: trigger
+          id: nice
+        sequence:
+        - service: notify.jeff_ios
+          data:
+            message: '{{ taglines.everythingsmarthome }}'
+
+  - id: 618bd49f-3b0a-4b09-85ce-52f4e3b2f38c
+    alias: Smart Kitchen Lighting 
+    description: ''
+    trigger:
+    # The jina here might work better as a binary_sensor entity, because you could 
+    # visually see the currnt state and be able to check timestamps. But this should work
+    # and trigger your automation any time a motion, occupancy, or door sensor in the
+    # kitchen area turns on.
+    - platform: template
+      value_template: >
+          {{ states.binary_sensor | 
+              selectattr('entity_id', 'in', area_entities('kitchen')) |
+              rejectattr('attributes.device_class', 'undefined') |
+              selectattr('attributes.device_class', 'search', '(occupancy|motion|door)') | 
+              selectattr('state', 'eq', 'on') | 
+              map(attribute='entity_id') |
+              list | count > 0}}
+      id: Light_Needed
+    - platform: template
+      value_template: >
+          {{ states.binary_sensor | 
+              selectattr('entity_id', 'in', area_entities('kitchen')) |
+              rejectattr('attributes.device_class', 'undefined') |
+              selectattr('attributes.device_class', 'search', '(occupancy|motion|door)') | 
+              selectattr('state', 'eq', 'on') | 
+              map(attribute='entity_id') |
+              list | count > 0}}
+      for: '00:01:00'
+      id: lights_dim
+    - platform: template
+      value_template: >
+          {{ states.binary_sensor | 
+              selectattr('entity_id', 'in', area_entities('kitchen')) |
+              rejectattr('attributes.device_class', 'undefined') |
+              selectattr('attributes.device_class', 'search', '(occupancy|motion|door)') | 
+              selectattr('state', 'eq', 'on') | 
+              map(attribute='entity_id') |
+              list | count > 0}}
+      for: '00:05:00'
+      id: light_not_needed
+    condition: []
+    action:
+    # This action calls our get_room_lights script and gets a list of all the light entities in your kitchen
+    - service: script.get_room_lights
+      data:
+        room: kitchen
+      response_variable: "room"
+    - choose:
+      - conditions:
+        - condition: trigger
+          id: Light_Needed
+        sequence:
+        - service: light.turn_on
+          data:
+            brightness_pct: 100
+          target:
+            entity_id: '{{room.lights}}' # this uses the response the get_room_lights script to the entity ids.
+      - conditions:
+        - condition: trigger
+          id: Light_Needed
+        - condition: state
+          entity_id: input_boolean.audible_notifications
+          state: 'off'
+        sequence:
+        - service: light.turn_on
+          data:
+            brightness_pct: 50
+          target:
+            entity_id: '{{room.lights}}'
+      - conditions:
+        - condition: trigger
+          id: lights_dim
+        sequence:
+        - service: light.turn_on
+          data:
+            brightness_pct: 20
+          target:
+            entity_id: '{{room.lights}}'
+      - conditions:
+        - condition: trigger
+          id: light_not_needed
+        sequence:
+        - service: light.turn_off
+          target:
+            entity_id: '{{room.lights}}'
+      default: []
+    mode: restart
