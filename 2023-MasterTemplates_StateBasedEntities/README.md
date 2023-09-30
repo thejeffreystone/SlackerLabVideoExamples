@@ -3,7 +3,7 @@
 <h1>Master Home Assistant Templates: State Based Templates</h1>
 <br>
 
-[![Watch the video](../images/videos/tn-2022-AutomatingTimers2.png)](https://youtu.be/SuLPMxQUv0Q)
+[![Watch the video](../images/videos/tn-2023-TemplatesEntities.png)](https://youtu.be/XR8mkJB4k88)
 
 </div>
 
