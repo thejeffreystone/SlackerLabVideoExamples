@@ -1,0 +1,115 @@
+# For more information on the data you can include in this entities check out
+# https://www.home-assistant.io/integrations/template/
+#
+# These are the templates shown in the video
+
+- sensor:
+  - name: desk_light_energy
+    unique_id: desk_light_energy
+    state: "{{ state_attr('light.desk_backlight','energy')}}"
+
+  - name: basement_temp_celsius
+    unique_id: basement_temp_celsius
+    state: >
+      {% if has_value('sensor.basement_air_device_temperature') %}
+      {{ ((states('sensor.basement_air_device_temperature') | int - 32) / 1.8) | round(0) }}
+      {% endif %}
+
+  - name: days_until_halloween
+    unique_id: days_until_halloween
+    unit_of_measurement: Days
+    state: >
+      {{ ((as_timestamp(now().replace(month=10, day=31)) - as_timestamp(now()) | int) / 86400) | round(0) }} 
+  - name: days_until_christmas
+    unique_id: days_until_christmas
+    unit_of_measurement: Days
+    state: >
+      {{ ((as_timestamp(now().replace(month=12, day=25)) - as_timestamp(now()) | int) / 86400) | round(0) }}
+
+  - name: Critical Battery Count 
+    unique_id: critical_battery_count
+    state: >
+      {{ expand('group.critical_batteries') 
+      | rejectattr('state', 'eq', '100')
+      | selectattr('state', 'lt', '30') | list | count }}
+
+
+- binary_sensor:
+  - name: fridge_freezer_warming
+    unique_id: fridge_freezer_warming_sensor
+    state: >
+      {{ states('sensor.acurite_986_fridge_freezer_f')  | int > 15 }}
+    device_class: problem
+
+  - name: chest_freezer_warming
+    unique_id: chest_freezer_warming_sensor
+    state: >
+      {{ states('sensor.acurite_986_chest_freezer_f') | int > 15 }}
+    device_class: problem
+    
+  - name: school_tomorrow
+    unique_id: school_tomorrow
+    state: >
+      {% set next_event=as_timestamp(state_attr('calendar.school','start_time')) | timestamp_custom("%Y-%m-%d",true) %}
+      {% set tomorrow=(now().date() + timedelta(days=1)) | string %}
+      {{ next_event == tomorrow }} 
+
+  - name: ps5
+    unique_id: ps5_power_sensor
+    state: >
+      {{ states('sensor.playstation_power_power')  | int > 10 }}
+    device_class: running
+  - name: deck_roku_status
+    unique_id: deck_roku_status
+    state: >
+      {{ is_state('media_player.roku_deck','playing') }}
+    device_class: running
+  - name: livingroom_tv_status
+    unique_id: livingroom_tv_status
+    state: >
+      {{ states('sensor.power_switch_electric_consumption_w') | int > 100 }}
+    device_class: running
+  - name: theater_tv_status
+    unique_id: theater_tv_status
+    state: >
+      {{ is_state('media_player.theater_tv','on') }}
+    device_class: running
+
+  - name: kitchen_occupied
+    unique_id: kitchen_occupied
+    icon: mdi:account-group
+    state: >
+      {{ states.binary_sensor | 
+            selectattr('entity_id', 'in', area_entities('kitchen')) |
+            rejectattr('attributes.device_class', 'undefined') |
+            selectattr('attributes.device_class', 'search', '(occupancy|motion|door)') | 
+            selectattr('state', 'eq', 'on') | 
+            map(attribute='entity_id') |
+            list | count > 0}}
+    delay_off: '00:01:00'
+    attributes: 
+      people_count: >
+        {{ expand('group.room_presence') 
+        | selectattr('state', 'eq', 'living_room') 
+        | list 
+        | count }}
+
+  - name: studio_occupied
+    unique_id: studio_occupied
+    icon: mdi:account-group
+    state: >
+      {{ (expand('group.room_presence') 
+        | selectattr('state', 'eq', 'studio') 
+        | list 
+        | count >= 1 )
+        or 
+        (states.binary_sensor | 
+            selectattr('entity_id', 'in', area_entities('studio')) |
+            rejectattr('attributes.device_class', 'undefined') |
+            selectattr('attributes.device_class', 'search', '(occupancy|motion|door|running)') | 
+            selectattr('state', 'eq', 'on') |
+            map(attribute='entity_id') |
+            list | count > 0 )}}
+    attributes: 
+      people_count: >
+

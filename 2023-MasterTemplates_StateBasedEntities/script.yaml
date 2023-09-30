@@ -1,0 +1,52 @@
+# Scripts referenced
+
+update_critical_battery_group:
+  sequence:
+    # Reset group 
+    - service: group.set
+      data:
+        object_id: "critical_batteries"
+        entities: []
+    # Add Battery in the Critical Battery Group
+    - service: group.set
+      data:
+        object_id: "critical_batteries"
+        add_entities: >-
+          {{ states.sensor | 
+            selectattr('entity_id', 'in', area_entities('Critical Batteries')) |
+            map(attribute='entity_id') | list  | join(',') }} 
+
+battery_notification:
+  sequence:
+    - service: script.get_jeff_briefing
+      response_variable: "jeff_briefing"
+    - condition: template
+      value_template: >
+        {{ jeff_briefing.critical_battery_count | int > 0 }}
+    - variables:
+        message: >
+          {% set batts = expand('group.critical_batteries') 
+            | rejectattr('state', 'eq', '100')
+            | selectattr('state', 'lt', '30') | list %}
+          {% for bat in batts %}
+            {{ bat.name }} - {{ bat.state }}%
+          {% endfor %}
+    - service: script.cleanup_text
+      data:
+        message: >
+          {{ message }}
+      response_variable: "cleaned_message"
+    - service: script.text_notify
+      data:
+        who: "jeff"
+        message: >
+          {{ cleaned_message.text }}
+        title: "Battery List"
+    - service: persistent_notification.dismiss
+      data:
+        notification_id: "battery_notification"
+    - service: persistent_notification.create 
+      data:
+        notification_id: "battery_notification"
+        message: "{{ message }}"
+        title: "Battery List - To Change"
