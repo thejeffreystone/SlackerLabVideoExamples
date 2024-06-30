@@ -1,0 +1,35 @@
+
+
+automation: !include automations.yaml
+
+conversation:
+  intents:
+    whereami:
+      - "where am I"
+      - "Where are you"
+      - "what room is this"
+    areyouawake:
+      - "are you awake"
+      - "are you up"
+
+intent_script:
+  whereami:
+    speech:
+      text: >
+        {% set room = expand(label_entities('Jarvis')) | sort(attribute='last_changed') |
+                map(attribute='entity_id') | list| last | area_name() %}
+        {{ [
+          "You are currently in the " ~ room ~ ".",
+          "It appears you are in the " ~ room ~ ".",
+          "I can see you in " ~ room ~ ".",
+          "Are you having a laugh? You are in the " ~ room ~ "."
+        ] | random }}
+  areyouawake:
+    speech:
+      text: >
+        {{ [
+          "For you, always.",
+          "Yes. I am awake. How may I be of service?",
+          "Of course.",
+          "I am indeed online."
+        ] | random }}

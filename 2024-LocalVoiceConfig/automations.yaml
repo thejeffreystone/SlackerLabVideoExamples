@@ -1,0 +1,50 @@
+- id: '1712687167938'
+  alias: Basic Jarvis
+  description: ''
+  trigger:
+  - platform: conversation
+    command: what time is it
+    id: time
+  - platform: conversation
+    command:
+    - read me a haiku
+    - give me a haiku
+    - do you know a haiku
+    id: haiku
+  condition: []
+  action:
+  - set_conversation_response: ''
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - time
+      sequence:
+      - service: script.return_the_time
+        metadata: {}
+        data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - haiku
+      sequence:
+      - service: script.return_haiku
+        metadata: {}
+        data: {}
+  mode: single
+- id: '1719540841594'
+  alias: TTS_Thetime
+  description: ''
+  trigger:
+  - platform: conversation
+    command: what time is it
+  condition: []
+  action:
+  - set_conversation_response: ''
+  - service: tts.cloud_say
+    metadata: {}
+    data:
+      cache: false
+      message: It is {{ now().strftime("%I:%M %p") }}.
+      entity_id: media_player.studio_speaker
+  mode: single
